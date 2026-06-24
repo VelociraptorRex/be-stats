@@ -1,206 +1,104 @@
-from pathlib import Path
-from collections import defaultdict
-import argparse
-import html
-import re
-import subprocess
+<!DOCTYPE html>
 
-try:
-    from openpyxl import load_workbook
-except ImportError as exc:
-    raise SystemExit("Нужен пакет openpyxl. Установи его командой: pip install openpyxl") from exc
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Прибыльность по странам</title>
+<link href="assets/style.css" rel="stylesheet"/>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>/* countries.html local finishing styles */
+.countries-table th { cursor: pointer; user-select: none; white-space: nowrap; }
+.countries-table th.sort-asc::after { content: " ▲"; font-size: 0.78em; opacity: 0.75; }
+.countries-table th.sort-desc::after { content: " ▼"; font-size: 0.78em; opacity: 0.75; }
+.countries-table td:not(.country-cell),
+.countries-table th:not(:first-child) { text-align: center; vertical-align: middle; }
+.countries-table .country-cell { text-align: left; vertical-align: middle; white-space: nowrap; }
+.country-with-flag { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.country-flag { width: 28px; height: 20px; object-fit: cover; border-radius: 3px; box-shadow: 0 0 0 1px rgba(15,23,42,.14); flex: 0 0 auto; }
+.country-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 64px; height: 28px; padding: 0 10px; border-radius: 7px; color: #fff; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.country-badge.total-badge { background: rgb(40, 114, 51); }
+.country-badge.count-badge { background: rgb(0, 0, 0); min-width: 46px; }
+.country-badge.avg-badge { background: rgb(25, 25, 112); min-width: 70px; }
 
-# Коды для flagcdn.com. При необходимости можно спокойно дополнять словарь.
-FLAG_CODES = {
-    "Австралия": "au", "Австрия": "at", "Алжир": "dz", "Англия": "gb-eng",
-    "Аргентина": "ar", "Бельгия": "be", "Босния и Герцеговина": "ba", "Бразилия": "br",
-    "Гаити": "ht", "Германия": "de", "ДР Конго": "cd", "Египет": "eg",
-    "Иран": "ir", "Ирак": "iq", "Испания": "es", "Италия": "it",
-    "Кабо-Верде": "cv", "Канада": "ca", "Катар": "qa", "Кот д'Ивуар": "ci",
-    "Коста-Рика": "cr", "Кюрасао": "cw", "Марокко": "ma", "Мексика": "mx",
-    "Нидерланды": "nl", "Новая Зеландия": "nz", "Норвегия": "no", "Парагвай": "py",
-    "Португалия": "pt", "Саудовская Аравия": "sa", "Сенегал": "sn", "Сербия": "rs",
-    "США": "us", "Тунис": "tn", "Турция": "tr", "Уругвай": "uy",
-    "Франция": "fr", "Хорватия": "hr", "Чехия": "cz", "Швейцария": "ch",
-    "Швеция": "se", "Шотландия": "gb-sct", "Эквадор": "ec", "Южная Корея": "kr",
-    "ЮАР": "za", "Япония": "jp",
+.country-cell { width: 34%; }
+.country-name-long { font-size: 0.86em; }
+
+.countries-table th:nth-child(5),
+.countries-table td:nth-child(5) {
+  width: 80px;
+  min-width: 80px;
 }
 
-MATCH_DASH = "—"
+.countries-table th:nth-child(5) {
+  font-size: 0.8em;
+}
 
+</style></head>
+<body class="light-theme">
+<header class="site-header">
+<div>
+<p class="eyebrow">World Cup 2026 betting dashboard</p>
+<h1>Прибыльность по странам</h1>
+</div>
+<nav>
+<a href="index.html">График</a>
+<a href="records.html">Рекорды</a>
+<a href="countries.html">Страны</a>
+<a href="markets.html">Типы ставок</a>
+<a href="bets.html">Все ставки</a>
+</nav>
+</header>
+<main>
+<section class="notice">
+<p>Метод подсчёта простой: профит ставки начисляется обеим странам из матча. Поэтому это скорее «с какими матчами страна ассоциирована», а не строгая сила сборной.</p>
+</section>
+<section class="grid-two">
+<article class="panel">
+<h2>Gerzog: лучшие страны</h2>
+<div class="table-wrap"><table class="countries-table stats-table sortable-countries"><thead><tr><th data-sort-type="text" title="Сортировать">Страна</th><th data-sort-type="number" title="Сортировать">Итого</th><th data-sort-type="number" title="Сортировать">Ставок</th><th data-sort-type="number" title="Сортировать">Ср. профит</th><th data-sort-type="number" title="Сортировать">Макс.<br>выигрыш</th></tr></thead><tbody><tr><td class="country-cell" data-sort="США"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/us.png"/><span class="">США</span></span></td><td data-sort="560.0"><span class="country-badge total-badge">560</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="280.0"><span class="country-badge avg-badge">280,0</span></td><td data-sort="660.0"><span class="country-badge total-badge">+660</span></td></tr><tr><td class="country-cell" data-sort="Австралия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/au.png"/><span class="">Австралия</span></span></td><td data-sort="560.0"><span class="country-badge total-badge">560</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="280.0"><span class="country-badge avg-badge">280,0</span></td><td data-sort="660.0"><span class="country-badge total-badge">+660</span></td></tr><tr><td class="country-cell" data-sort="Босния и Герцеговина"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ba.png"/><span class="country-name-long">Босния и Герцеговина</span></span></td><td data-sort="429.0"><span class="country-badge total-badge">429</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="214.5"><span class="country-badge avg-badge">214,5</span></td><td data-sort="355.0"><span class="country-badge total-badge">+355</span></td></tr><tr><td class="country-cell" data-sort="Швейцария"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ch.png"/><span class="">Швейцария</span></span></td><td data-sort="255.0"><span class="country-badge total-badge">255</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="127.5"><span class="country-badge avg-badge">127,5</span></td><td data-sort="355.0"><span class="country-badge total-badge">+355</span></td></tr><tr><td class="country-cell" data-sort="Канада"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ca.png"/><span class="">Канада</span></span></td><td data-sort="230.0"><span class="country-badge total-badge">230</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="115.0"><span class="country-badge avg-badge">115,0</span></td><td data-sort="156.0"><span class="country-badge total-badge">+156</span></td></tr><tr><td class="country-cell" data-sort="Египет"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/eg.png"/><span class="">Египет</span></span></td><td data-sort="223.0"><span class="country-badge total-badge">223</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="111.5"><span class="country-badge avg-badge">111,5</span></td><td data-sort="128.0"><span class="country-badge total-badge">+128</span></td></tr><tr><td class="country-cell" data-sort="Аргентина"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ar.png"/><span class="">Аргентина</span></span></td><td data-sort="205.0"><span class="country-badge total-badge">205</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="102.5"><span class="country-badge avg-badge">102,5</span></td><td data-sort="305.0"><span class="country-badge total-badge">+305</span></td></tr><tr><td class="country-cell" data-sort="Австрия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/at.png"/><span class="">Австрия</span></span></td><td data-sort="205.0"><span class="country-badge total-badge">205</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="102.5"><span class="country-badge avg-badge">102,5</span></td><td data-sort="305.0"><span class="country-badge total-badge">+305</span></td></tr><tr><td class="country-cell" data-sort="Германия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/de.png"/><span class="">Германия</span></span></td><td data-sort="118.0"><span class="country-badge total-badge">118</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="59.0"><span class="country-badge avg-badge">59,0</span></td><td data-sort="66.0"><span class="country-badge total-badge">+66</span></td></tr><tr><td class="country-cell" data-sort="Норвегия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/no.png"/><span class="">Норвегия</span></span></td><td data-sort="100.0"><span class="country-badge total-badge">100</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="50.0"><span class="country-badge avg-badge">50,0</span></td><td data-sort="200.0"><span class="country-badge total-badge">+200</span></td></tr><tr><td class="country-cell" data-sort="Ирак"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/iq.png"/><span class="">Ирак</span></span></td><td data-sort="100.0"><span class="country-badge total-badge">100</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="50.0"><span class="country-badge avg-badge">50,0</span></td><td data-sort="200.0"><span class="country-badge total-badge">+200</span></td></tr><tr><td class="country-cell" data-sort="Гаити"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ht.png"/><span class="">Гаити</span></span></td><td data-sort="96.0"><span class="country-badge total-badge">96</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="48.0"><span class="country-badge avg-badge">48,0</span></td><td data-sort="83.0"><span class="country-badge total-badge">+83</span></td></tr></tbody></table></div>
+</article>
+<article class="panel">
+<h2>Yukon: лучшие страны</h2>
+<div class="table-wrap"><table class="countries-table stats-table sortable-countries"><thead><tr><th data-sort-type="text" title="Сортировать">Страна</th><th data-sort-type="number" title="Сортировать">Итого</th><th data-sort-type="number" title="Сортировать">Ставок</th><th data-sort-type="number" title="Сортировать">Ср. профит</th><th data-sort-type="number" title="Сортировать">Макс.<br>выигрыш</th></tr></thead><tbody><tr><td class="country-cell" data-sort="Нидерланды"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/nl.png"/><span class="">Нидерланды</span></span></td><td data-sort="291.0"><span class="country-badge total-badge">291</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="145.5"><span class="country-badge avg-badge">145,5</span></td><td data-sort="210.0"><span class="country-badge total-badge">+210</span></td></tr><tr><td class="country-cell" data-sort="Швеция"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/se.png"/><span class="">Швеция</span></span></td><td data-sort="255.0"><span class="country-badge total-badge">255</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="127.5"><span class="country-badge avg-badge">127,5</span></td><td data-sort="210.0"><span class="country-badge total-badge">+210</span></td></tr><tr><td class="country-cell" data-sort="Аргентина"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ar.png"/><span class="">Аргентина</span></span></td><td data-sort="192.0"><span class="country-badge total-badge">192</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="96.0"><span class="country-badge avg-badge">96,0</span></td><td data-sort="134.0"><span class="country-badge total-badge">+134</span></td></tr><tr><td class="country-cell" data-sort="Сенегал"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/sn.png"/><span class="">Сенегал</span></span></td><td data-sort="189.0"><span class="country-badge total-badge">189</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="94.5"><span class="country-badge avg-badge">94,5</span></td><td data-sort="108.0"><span class="country-badge total-badge">+108</span></td></tr><tr><td class="country-cell" data-sort="США"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/us.png"/><span class="">США</span></span></td><td data-sort="189.0"><span class="country-badge total-badge">189</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="94.5"><span class="country-badge avg-badge">94,5</span></td><td data-sort="96.0"><span class="country-badge total-badge">+96</span></td></tr><tr><td class="country-cell" data-sort="Япония"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/jp.png"/><span class="">Япония</span></span></td><td data-sort="165.0"><span class="country-badge total-badge">165</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="82.5"><span class="country-badge avg-badge">82,5</span></td><td data-sort="84.0"><span class="country-badge total-badge">+84</span></td></tr><tr><td class="country-cell" data-sort="Франция"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/fr.png"/><span class="">Франция</span></span></td><td data-sort="143.0"><span class="country-badge total-badge">143</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="71.5"><span class="country-badge avg-badge">71,5</span></td><td data-sort="81.0"><span class="country-badge total-badge">+81</span></td></tr><tr><td class="country-cell" data-sort="Тунис"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/tn.png"/><span class="">Тунис</span></span></td><td data-sort="129.0"><span class="country-badge total-badge">129</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="64.5"><span class="country-badge avg-badge">64,5</span></td><td data-sort="84.0"><span class="country-badge total-badge">+84</span></td></tr><tr><td class="country-cell" data-sort="Бельгия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/be.png"/><span class="">Бельгия</span></span></td><td data-sort="128.0"><span class="country-badge total-badge">128</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="64.0"><span class="country-badge avg-badge">64,0</span></td><td data-sort="78.0"><span class="country-badge total-badge">+78</span></td></tr><tr><td class="country-cell" data-sort="Кюрасао"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/cw.png"/><span class="">Кюрасао</span></span></td><td data-sort="120.0"><span class="country-badge total-badge">120</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="60.0"><span class="country-badge avg-badge">60,0</span></td><td data-sort="220.0"><span class="country-badge total-badge">+220</span></td></tr><tr><td class="country-cell" data-sort="Германия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/de.png"/><span class="">Германия</span></span></td><td data-sort="120.0"><span class="country-badge total-badge">120</span></td><td data-sort="2.0"><span class="country-badge count-badge">1/2</span></td><td data-sort="60.0"><span class="country-badge avg-badge">60,0</span></td><td data-sort="220.0"><span class="country-badge total-badge">+220</span></td></tr><tr><td class="country-cell" data-sort="Марокко"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ma.png"/><span class="">Марокко</span></span></td><td data-sort="112.0"><span class="country-badge total-badge">112</span></td><td data-sort="2.0"><span class="country-badge count-badge">2/2</span></td><td data-sort="56.0"><span class="country-badge avg-badge">56,0</span></td><td data-sort="74.0"><span class="country-badge total-badge">+74</span></td></tr></tbody></table></div>
+</article>
+</section>
+</main>
+<footer>
+<p>Статический сайт для GitHub Pages. Данные хранятся в <code>assets/app.js</code>.</p>
+</footer>
+<script src="assets/app.js"></script>
+<script>(function () {
+  function parseValue(cell, type) {
+    const raw = (cell.dataset.sort || cell.textContent || '').trim().replace(/\s+/g, '').replace(',', '.');
+    if (type === 'number') {
+      const n = Number(raw);
+      return Number.isNaN(n) ? -Infinity : n;
+    }
+    return (cell.dataset.sort || cell.textContent || '').trim().toLocaleLowerCase('ru-RU');
+  }
 
-def clean_match_name(value):
-    """Берём только строку с командами, отбрасывая счёт после переноса строки."""
-    if not isinstance(value, str):
-        return None
-    value = value.strip()
-    if MATCH_DASH not in value:
-        return None
-    return value.split("\n", 1)[0].strip()
+  document.querySelectorAll('table.sortable-countries').forEach((table) => {
+    const headers = table.querySelectorAll('thead th');
+    const tbody = table.querySelector('tbody');
+    headers.forEach((th, index) => {
+      th.addEventListener('click', () => {
+        const type = th.dataset.sortType || (index === 0 ? 'text' : 'number');
+        const current = th.classList.contains('sort-asc') ? 'asc' : th.classList.contains('sort-desc') ? 'desc' : '';
+        const direction = current === 'asc' ? 'desc' : 'asc';
+        headers.forEach((h) => h.classList.remove('sort-asc', 'sort-desc'));
+        th.classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
 
-
-def split_countries(match_name):
-    left, right = match_name.split(MATCH_DASH, 1)
-    return left.strip(), right.strip()
-
-
-def parse_bank(value):
-    if isinstance(value, (int, float)):
-        return float(value)
-    return None
-
-
-def read_match_blocks(xlsx_path, sheet_name="Журнал"):
-    wb = load_workbook(xlsx_path, data_only=True)
-    if sheet_name not in wb.sheetnames:
-        raise SystemExit(f"В Excel-файле нет листа {sheet_name!r}. Найдены листы: {', '.join(wb.sheetnames)}")
-    ws = wb[sheet_name]
-
-    blocks = []
-    for row in range(1, ws.max_row + 1):
-        match_name = clean_match_name(ws.cell(row, 1).value)
-        if not match_name:
-            continue
-
-        # Структура твоего журнала:
-        # строка матча = ставка/банк Gerzog;
-        # строка + 2 = ставка/банк Yukon.
-        gerzog_bank = parse_bank(ws.cell(row, 4).value)
-        yukon_bank = parse_bank(ws.cell(row + 2, 4).value) if row + 2 <= ws.max_row else None
-        blocks.append({
-            "row": row,
-            "match": match_name,
-            "gerzog_bank": gerzog_bank,
-            "yukon_bank": yukon_bank,
-        })
-    return blocks
-
-
-def country_stats(blocks, player_key, initial_bank=1000.0):
-    """
-    Считаем профит по изменению банка.
-    Журнал идёт сверху вниз от новых матчей к старым, поэтому считаем снизу вверх.
-    Профит каждой ставки начисляется обеим странам матча.
-    """
-    previous_bank = float(initial_bank)
-    stats = defaultdict(lambda: {"total": 0.0, "count": 0, "wins": 0, "max_win": 0.0})
-
-    for block in reversed(blocks):
-        bank = block[player_key]
-        if bank is None:
-            continue
-        profit = bank - previous_bank
-        previous_bank = bank
-
-        country_a, country_b = split_countries(block["match"])
-        for country in (country_a, country_b):
-            stats[country]["total"] += profit
-            stats[country]["count"] += 1
-            if profit > 0:
-                stats[country]["wins"] += 1
-                stats[country]["max_win"] = max(stats[country]["max_win"], profit)
-
-    rows = []
-    for country, values in stats.items():
-        count = values["count"]
-        total = values["total"]
-        avg = total / count if count else 0
-        rows.append({
-        "country": country,
-        "total": total,
-        "count": count,
-        "wins": values["wins"],
-        "avg": avg,
-        "max_win": values["max_win"],
-        })
-
-    rows.sort(key=lambda x: x["country"], reverse=True)
-    rows.sort(key=lambda x: x["total"], reverse=True)
-    return rows
-
-
-def fmt_total(value):
-    value = round(value, 1)
-    return str(int(value)) if value.is_integer() else str(value).replace(".", ",")
-
-
-def fmt_avg(value):
-    return f"{value:.1f}".replace(".", ",")
-
-
-def sort_number(value):
-    return f"{float(value):.1f}"
-
-
-def row_html(item):
-    country = item["country"]
-    total = item["total"]
-    count = item["count"]
-    wins = item["wins"]
-    avg = item["avg"]
-    max_win = item["max_win"]
-    code = FLAG_CODES.get(country)
-    safe_country = html.escape(country, quote=True)
-    name_class = "country-name-long" if len(country) >= 18 else ""
-
-    if code:
-        flag = f'<img alt="" class="country-flag" src="https://flagcdn.com/w40/{code}.png"/>'
-    else:
-        # Если страна новая и её нет в FLAG_CODES, таблица не ломается: просто будет без картинки.
-        flag = ''
-
-    return (
-        f'<tr><td class="country-cell" data-sort="{safe_country}">'
-        f'<span class="country-with-flag">{flag}<span class="{name_class}">{safe_country}</span></span></td>'
-        f'<td data-sort="{sort_number(total)}"><span class="country-badge total-badge">{fmt_total(total)}</span></td>'
-        f'<td data-sort="{sort_number(count)}"><span class="country-badge count-badge">{wins}/{count}</span></td>'
-        f'<td data-sort="{sort_number(avg)}"><span class="country-badge avg-badge">{fmt_avg(avg)}</span></td>'
-        f'<td data-sort="{sort_number(max_win)}"><span class="country-badge total-badge">{fmt_max_win(max_win)}</span></td></tr>'
-    )
-
-
-def build_rows(rows, limit=12):
-    return "".join(row_html(item) for item in rows[:limit])
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Пересобрать countries.html из Excel, сохранив старое оформление.")
-    parser.add_argument("--xlsx", default="Ставки на ЧМ-2026-20-42-24-06-2026.xlsx", help="Путь к Excel-файлу")
-    parser.add_argument("--template", default="countries_template.html", help="HTML-шаблон со специальными метками")
-    parser.add_argument("--out", default="/Users/yukon/Documents/Gevalex/SiteGA/betting-stats-main 3/ready/countries_EKS3.html", help="Куда сохранить готовый HTML")
-    parser.add_argument("--limit", type=int, default=12, help="Сколько стран показывать в каждом топе")
-    args = parser.parse_args()
-
-    blocks = read_match_blocks(args.xlsx)
-    gerzog = country_stats(blocks, "gerzog_bank")
-    yukon = country_stats(blocks, "yukon_bank")
-
-    template = Path(args.template).read_text(encoding="utf-8")
-    html_text = template.replace("<!-- GERZOG_COUNTRIES_ROWS -->", build_rows(gerzog, args.limit))
-    html_text = html_text.replace("<!-- YUKON_COUNTRIES_ROWS -->", build_rows(yukon, args.limit))
-
-    if "<!-- GERZOG_COUNTRIES_ROWS -->" in html_text or "<!-- YUKON_COUNTRIES_ROWS -->" in html_text:
-        raise SystemExit("В шаблоне не заменились метки строк. Проверь countries_template.html")
-
-    Path(args.out).write_text(html_text, encoding="utf-8")
-    print(f"Готово: {args.out}")
-    print(f"Обработано матчей: {len(blocks)}")
-    print(f"Gerzog: {len(gerzog)} стран; Yukon: {len(yukon)} стран")
-    subprocess.run(["open", args.out])
-
-#Для + в столбце макс. выигрыш
-def fmt_max_win(value):
-    value = round(value, 1)
-
-    if value > 0:
-        prefix = "+"
-    else:
-        prefix = ""
-
-    if value.is_integer():
-        return f"{prefix}{int(value)}"
-
-    return f"{prefix}{str(value).replace('.', ',')}"
-
-if __name__ == "__main__":
-    main()
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+          const av = parseValue(a.children[index], type);
+          const bv = parseValue(b.children[index], type);
+          let result = type === 'number' ? av - bv : av.localeCompare(bv, 'ru-RU');
+          return direction === 'asc' ? result : -result;
+        });
+        rows.forEach((row) => tbody.appendChild(row));
+      });
+    });
+  });
+})();</script></body>
+</html>
