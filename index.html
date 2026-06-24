@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Динамика банка</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body class="dark-theme">
+<main class="page">
+  <h1 class="page-title">Динамика банка после матчей первого и второго тура ЧМ-2026</h1>
+
+  <nav class="top-menu">
+    <a href="index.html">График</a>
+    <a href="records.html">Рекорды</a>
+    <a href="countries.html">Страны</a>
+    <a href="markets.html">Типы ставок</a>
+    <a href="bets.html">Все ставки</a>
+  </nav>
+
+  <section class="summary-grid">
+    <article class="summary-card">
+      <span class="label">Gerzog</span>
+      <span class="value">1217</span>
+      <span class="sub plus">+217</span>
+    </article>
+
+    <article class="summary-card">
+      <span class="label">Yukon</span>
+      <span class="value">1091</span>
+      <span class="sub plus">+91</span>
+    </article>
+
+    <article class="summary-card">
+      <span class="label">Количество матчей</span>
+      <span class="value">32</span>
+      <span class="sub">2 тура</span>
+    </article>
+
+    <article class="summary-card">
+      <span class="label">Лидер по банку</span>
+      <span class="value">Gerzog</span>
+      <span class="sub">после 32 матчей</span>
+    </article>
+  </section>
+
+  <section class="chart-block">
+    <div id="bank-chart"></div>
+    <p class="note">По оси X указаны пары в FIFA-формате: ARG-ALG, UZB-COL и т.д.</p>
+  </section>
+</main>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Прибыльность по странам</title>
+<link href="assets/style.css" rel="stylesheet"/>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>/* countries.html local finishing styles */
+.countries-table th { cursor: pointer; user-select: none; white-space: nowrap; }
+.countries-table th.sort-asc::after { content: " ▲"; font-size: 0.78em; opacity: 0.75; }
+.countries-table th.sort-desc::after { content: " ▼"; font-size: 0.78em; opacity: 0.75; }
+.countries-table td:not(.country-cell),
+.countries-table th:not(:first-child) { text-align: center; vertical-align: middle; }
+.countries-table .country-cell { text-align: left; vertical-align: middle; white-space: nowrap; }
+.country-with-flag { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.country-flag { width: 28px; height: 20px; object-fit: cover; border-radius: 3px; box-shadow: 0 0 0 1px rgba(15,23,42,.14); flex: 0 0 auto; }
+.country-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 64px; height: 28px; padding: 0 10px; border-radius: 7px; color: #fff; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.country-badge.total-badge { background: rgb(40, 114, 51); }
+.country-badge.count-badge { background: rgb(0, 0, 0); min-width: 46px; }
+.country-badge.avg-badge { background: rgb(25, 25, 112); min-width: 70px; }</style></head>
+<body class="light-theme">
+<header class="site-header">
+<div>
+<p class="eyebrow">World Cup 2026 betting dashboard</p>
+<h1>Прибыльность по странам</h1>
+</div>
+<nav>
+<a href="index.html">График</a>
+<a href="records.html">Рекорды</a>
+<a href="countries.html">Страны</a>
+<a href="markets.html">Типы ставок</a>
+<a href="bets.html">Все ставки</a>
+</nav>
+</header>
+<main>
+<section class="notice">
+<p>Метод подсчёта простой: профит ставки начисляется обеим странам из матча. Поэтому это скорее «с какими матчами страна ассоциирована», а не строгая сила сборной.</p>
+</section>
+<section class="grid-two">
+<article class="panel">
+<h2>Gerzog: лучшие страны</h2>
+<div class="table-wrap"><table class="countries-table stats-table sortable-countries"><thead><tr><th data-sort-type="text" title="Сортировать">Страна</th><th data-sort-type="number" title="Сортировать">Итого</th><th data-sort-type="number" title="Сортировать">Ставок</th><th data-sort-type="number" title="Сортировать">Средний профит</th></tr></thead><tbody><tr><td class="country-cell" data-sort="США"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/us.png"/><span>США</span></span></td><td data-sort="560.0"><span class="country-badge total-badge">560</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="280.0"><span class="country-badge avg-badge">280,0</span></td></tr><tr><td class="country-cell" data-sort="Австралия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/au.png"/><span>Австралия</span></span></td><td data-sort="560.0"><span class="country-badge total-badge">560</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="280.0"><span class="country-badge avg-badge">280,0</span></td></tr><tr><td class="country-cell" data-sort="Босния и Герцеговина"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ba.png"/><span>Босния и Герцеговина</span></span></td><td data-sort="429.0"><span class="country-badge total-badge">429</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="214.5"><span class="country-badge avg-badge">214,5</span></td></tr><tr><td class="country-cell" data-sort="Швейцария"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ch.png"/><span>Швейцария</span></span></td><td data-sort="255.0"><span class="country-badge total-badge">255</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="127.5"><span class="country-badge avg-badge">127,5</span></td></tr><tr><td class="country-cell" data-sort="Канада"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ca.png"/><span>Канада</span></span></td><td data-sort="230.0"><span class="country-badge total-badge">230</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="115.0"><span class="country-badge avg-badge">115,0</span></td></tr><tr><td class="country-cell" data-sort="Норвегия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/no.png"/><span>Норвегия</span></span></td><td data-sort="200.0"><span class="country-badge total-badge">200</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="200.0"><span class="country-badge avg-badge">200,0</span></td></tr><tr><td class="country-cell" data-sort="Ирак"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/iq.png"/><span>Ирак</span></span></td><td data-sort="200.0"><span class="country-badge total-badge">200</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="200.0"><span class="country-badge avg-badge">200,0</span></td></tr><tr><td class="country-cell" data-sort="Германия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/de.png"/><span>Германия</span></span></td><td data-sort="118.0"><span class="country-badge total-badge">118</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="59.0"><span class="country-badge avg-badge">59,0</span></td></tr><tr><td class="country-cell" data-sort="Хорватия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/hr.png"/><span>Хорватия</span></span></td><td data-sort="102.0"><span class="country-badge total-badge">102</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="102.0"><span class="country-badge avg-badge">102,0</span></td></tr><tr><td class="country-cell" data-sort="Англия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/gb-eng.png"/><span>Англия</span></span></td><td data-sort="102.0"><span class="country-badge total-badge">102</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="102.0"><span class="country-badge avg-badge">102,0</span></td></tr><tr><td class="country-cell" data-sort="Франция"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/fr.png"/><span>Франция</span></span></td><td data-sort="101.0"><span class="country-badge total-badge">101</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="101.0"><span class="country-badge avg-badge">101,0</span></td></tr><tr><td class="country-cell" data-sort="Сенегал"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/sn.png"/><span>Сенегал</span></span></td><td data-sort="101.0"><span class="country-badge total-badge">101</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="101.0"><span class="country-badge avg-badge">101,0</span></td></tr></tbody></table></div>
+</article>
+<article class="panel">
+<h2>Yukon: лучшие страны</h2>
+<div class="table-wrap"><table class="countries-table stats-table sortable-countries"><thead><tr><th data-sort-type="text" title="Сортировать">Страна</th><th data-sort-type="number" title="Сортировать">Итого</th><th data-sort-type="number" title="Сортировать">Ставок</th><th data-sort-type="number" title="Сортировать">Средний профит</th></tr></thead><tbody><tr><td class="country-cell" data-sort="Нидерланды"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/nl.png"/><span>Нидерланды</span></span></td><td data-sort="291.0"><span class="country-badge total-badge">291</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="145.5"><span class="country-badge avg-badge">145,5</span></td></tr><tr><td class="country-cell" data-sort="Швеция"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/se.png"/><span>Швеция</span></span></td><td data-sort="255.0"><span class="country-badge total-badge">255</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="127.5"><span class="country-badge avg-badge">127,5</span></td></tr><tr><td class="country-cell" data-sort="Кюрасао"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/cw.png"/><span>Кюрасао</span></span></td><td data-sort="220.0"><span class="country-badge total-badge">220</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="220.0"><span class="country-badge avg-badge">220,0</span></td></tr><tr><td class="country-cell" data-sort="США"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/us.png"/><span>США</span></span></td><td data-sort="189.0"><span class="country-badge total-badge">189</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="94.5"><span class="country-badge avg-badge">94,5</span></td></tr><tr><td class="country-cell" data-sort="Уругвай"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/uy.png"/><span>Уругвай</span></span></td><td data-sort="144.0"><span class="country-badge total-badge">144</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="144.0"><span class="country-badge avg-badge">144,0</span></td></tr><tr><td class="country-cell" data-sort="Саудовская Аравия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/sa.png"/><span>Саудовская Аравия</span></span></td><td data-sort="144.0"><span class="country-badge total-badge">144</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="144.0"><span class="country-badge avg-badge">144,0</span></td></tr><tr><td class="country-cell" data-sort="Эквадор"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ec.png"/><span>Эквадор</span></span></td><td data-sort="134.0"><span class="country-badge total-badge">134</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="134.0"><span class="country-badge avg-badge">134,0</span></td></tr><tr><td class="country-cell" data-sort="Аргентина"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ar.png"/><span>Аргентина</span></span></td><td data-sort="134.0"><span class="country-badge total-badge">134</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="134.0"><span class="country-badge avg-badge">134,0</span></td></tr><tr><td class="country-cell" data-sort="Алжир"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/dz.png"/><span>Алжир</span></span></td><td data-sort="134.0"><span class="country-badge total-badge">134</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="134.0"><span class="country-badge avg-badge">134,0</span></td></tr><tr><td class="country-cell" data-sort="Германия"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/de.png"/><span>Германия</span></span></td><td data-sort="120.0"><span class="country-badge total-badge">120</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="60.0"><span class="country-badge avg-badge">60,0</span></td></tr><tr><td class="country-cell" data-sort="Марокко"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/ma.png"/><span>Марокко</span></span></td><td data-sort="112.0"><span class="country-badge total-badge">112</span></td><td data-sort="2.0"><span class="country-badge count-badge">2</span></td><td data-sort="56.0"><span class="country-badge avg-badge">56,0</span></td></tr><tr><td class="country-cell" data-sort="Япония"><span class="country-with-flag"><img alt="" class="country-flag" src="https://flagcdn.com/w40/jp.png"/><span>Япония</span></span></td><td data-sort="81.0"><span class="country-badge total-badge">81</span></td><td data-sort="1.0"><span class="country-badge count-badge">1</span></td><td data-sort="81.0"><span class="country-badge avg-badge">81,0</span></td></tr></tbody></table></div>
+</article>
+</section>
+</main>
+<footer>
+<p>Статический сайт для GitHub Pages. Данные хранятся в <code>assets/app.js</code>.</p>
+</footer>
+<script src="assets/app.js"></script>
+<script>(function () {
+  function parseValue(cell, type) {
+    const raw = (cell.dataset.sort || cell.textContent || '').trim().replace(/\s+/g, '').replace(',', '.');
+    if (type === 'number') {
+      const n = Number(raw);
+      return Number.isNaN(n) ? -Infinity : n;
+    }
+    return (cell.dataset.sort || cell.textContent || '').trim().toLocaleLowerCase('ru-RU');
+  }
+
+  document.querySelectorAll('table.sortable-countries').forEach((table) => {
+    const headers = table.querySelectorAll('thead th');
+    const tbody = table.querySelector('tbody');
+    headers.forEach((th, index) => {
+      th.addEventListener('click', () => {
+        const type = th.dataset.sortType || (index === 0 ? 'text' : 'number');
+        const current = th.classList.contains('sort-asc') ? 'asc' : th.classList.contains('sort-desc') ? 'desc' : '';
+        const direction = current === 'asc' ? 'desc' : 'asc';
+        headers.forEach((h) => h.classList.remove('sort-asc', 'sort-desc'));
+        th.classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
+
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+          const av = parseValue(a.children[index], type);
+          const bv = parseValue(b.children[index], type);
+          let result = type === 'number' ? av - bv : av.localeCompare(bv, 'ru-RU');
+          return direction === 'asc' ? result : -result;
+        });
+        rows.forEach((row) => tbody.appendChild(row));
+      });
+    });
+  });
+})();</script></body>
+</html>

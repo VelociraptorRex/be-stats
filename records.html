@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Рекорды</title>
+<link href="assets/style.css" rel="stylesheet"/><style id="records-polish-style">
+/* Локальная полировка страницы рекордов */
+main {
+  width: min(1600px, calc(100% - 40px));
+}
+
+.records-comparison .grid-two {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.records-comparison article {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.records-comparison article + article {
+  margin-top: 6px;
+}
+
+.records-comparison .table-wrap {
+  flex: 1;
+  display: flex;
+}
+
+.records-comparison .records-table {
+  width: 100%;
+  min-width: 1180px;
+  height: 100%;
+  table-layout: fixed;
+  border: 1px solid currentColor;
+  font-size: 18px;
+}
+
+.records-table th,
+.records-table td,
+.series-table th,
+.series-table td {
+  padding: 8px 10px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap !important;
+  line-height: 1.15;
+}
+
+.records-table .match-with-flags span {
+  white-space: nowrap !important;
+}
+
+.records-table th:nth-child(1),
+.records-table td:nth-child(1) {
+  width: 64px;
+}
+
+.records-table th:nth-child(2),
+.records-table td:nth-child(2) {
+  width: 500px;
+}
+
+.records-table th:nth-child(3),
+.records-table td:nth-child(3) {
+  width: 420px;
+}
+
+.records-table th:nth-child(4),
+.records-table td:nth-child(4) {
+  width: 90px;
+}
+
+.records-table th:nth-child(5),
+.records-table td:nth-child(5) {
+  width: 106px;
+}
+
+.records-table .match-with-flags {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.records-table .match-with-flags .tooltip-flag {
+  width: 24px;
+  height: 16px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.65);
+  border-radius: 2px;
+}
+
+.records-table tbody tr:nth-child(even) td,
+.series-table tbody tr:nth-child(even) td {
+  background: rgba(0, 0, 0, 0.018);
+}
+
+.records-table tbody tr:hover td,
+.series-table tbody tr:hover td {
+  background: rgba(0, 0, 0, 0.055);
+}
+
+.records-table td:last-child.plus,
+.series-table td:last-child.plus {
+  color: #006400 !important;
+}
+
+.series-table {
+  min-width: 760px;
+  border: 1px solid currentColor;
+  font-size: 20px;
+}
+
+@media (max-width: 950px) {
+  .records-comparison .grid-two {
+    grid-template-columns: 1fr;
+  }
+
+  .records-comparison .records-table {
+    min-width: 1080px;
+    font-size: 16px;
+  }
+}
+
+
+/* Бейджи и сортировка для records4 */
+.stats-table th {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.stats-table th::after {
+  content: "↕";
+  margin-left: 6px;
+  font-size: 0.72em;
+  opacity: 0.45;
+}
+
+.stats-table th.sort-asc::after {
+  content: "↑";
+  opacity: 0.9;
+}
+
+.stats-table th.sort-desc::after {
+  content: "↓";
+  opacity: 0.9;
+}
+
+.record-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  min-height: 30px;
+  padding: 4px 12px;
+  border-radius: 7px;
+  box-sizing: border-box;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.record-badge.bet-badge {
+  min-width: 190px;
+  padding-left: 14px;
+  padding-right: 14px;
+  background: #ffffff;
+  color: #111111;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+}
+
+.record-badge.coef-badge {
+  min-width: 64px;
+  background: rgb(25, 25, 112);
+  color: #ffffff;
+  border: 1px solid rgba(25, 25, 112, 0.9);
+}
+
+.record-badge.profit-badge {
+  min-width: 82px;
+  background: rgb(40, 114, 51);
+  color: #ffffff !important;
+  border: 1px solid rgba(40, 114, 51, 0.95);
+}
+
+.records-table td:nth-child(3),
+.records-table td:nth-child(4),
+.records-table td:nth-child(5),
+.series-table td:nth-child(5) {
+  text-align: center;
+}
+
+.records-table td.plus,
+.series-table td.plus,
+.series-table td.minus {
+  color: inherit !important;
+}
+
+
+.records-table td.minus .profit-badge,
+.series-table td.minus .profit-badge {
+  background: rgb(114, 40, 44);
+  border-color: rgba(114, 40, 44, 0.95);
+  color: #ffffff !important;
+}
+</style>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body class="light-theme">
+<header class="site-header">
+<div>
+<p class="eyebrow">World Cup 2026 betting dashboard</p>
+<h1>Рекорды</h1>
+</div>
+<nav>
+<a href="index.html">График</a>
+<a href="records.html">Рекорды</a>
+<a href="countries.html">Страны</a>
+<a href="markets.html">Типы ставок</a>
+<a href="bets.html">Все ставки</a>
+</nav>
+</header>
+<main>
+<section class="panel records-comparison">
+<h2>Лучшие коэффициенты, которые зашли</h2>
+<div class="grid-two">
+<article>
+<h3 class="subtable-title">Gerzog</h3>
+<div class="table-wrap"><table class="records-table stats-table"><thead><tr><th data-sort-col="0" title="Сортировать">№</th><th data-sort-col="1" title="Сортировать">Матч</th><th data-sort-col="2" title="Сортировать">Ставка</th><th data-sort-col="3" title="Сортировать">Кэф</th><th data-sort-col="4" title="Сортировать">Профит</th></tr></thead><tbody><tr><td>28</td><td class="match-cell" data-sort-value="США — Австралия"><span class="match-with-flags"><img alt="США" class="tooltip-flag" src="https://flagcdn.com/w40/us.png"/><span>США</span><span>—</span><img alt="Австралия" class="tooltip-flag" src="https://flagcdn.com/w40/au.png"/><span>Австралия</span></span></td><td data-sort-value="2-0"><span class="record-badge bet-badge">2-0</span></td><td data-sort-value="7,6"><span class="record-badge coef-badge">7,6</span></td><td class="plus" data-sort-value="660"><span class="record-badge profit-badge">660</span></td></tr><tr><td>25</td><td class="match-cell" data-sort-value="Швейцария — Босния и Герцеговина"><span class="match-with-flags"><img alt="Швейцария" class="tooltip-flag" src="https://flagcdn.com/w40/ch.png"/><span>Швейцария</span><span>—</span><img alt="Босния и Герцеговина" class="tooltip-flag" src="https://flagcdn.com/w40/ba.png"/><span>Босния и Герцеговина</span></span></td><td data-sort-value="Удаление будет"><span class="record-badge bet-badge">Удаление будет</span></td><td data-sort-value="4,55"><span class="record-badge coef-badge">4,55</span></td><td class="plus" data-sort-value="355"><span class="record-badge profit-badge">355</span></td></tr><tr><td>17</td><td class="match-cell" data-sort-value="Ирак — Норвегия"><span class="match-with-flags"><img alt="Ирак" class="tooltip-flag" src="https://flagcdn.com/w40/iq.png"/><span>Ирак</span><span>—</span><img alt="Норвегия" class="tooltip-flag" src="https://flagcdn.com/w40/no.png"/><span>Норвегия</span></span></td><td data-sort-value="Эрлинг Холанн — дубль"><span class="record-badge bet-badge">Эрлинг Холанн — дубль</span></td><td data-sort-value="3"><span class="record-badge coef-badge">3</span></td><td class="plus" data-sort-value="200"><span class="record-badge profit-badge">200</span></td></tr><tr><td>26</td><td class="match-cell" data-sort-value="Канада — Катар"><span class="match-with-flags"><img alt="Канада" class="tooltip-flag" src="https://flagcdn.com/w40/ca.png"/><span>Канада</span><span>—</span><img alt="Катар" class="tooltip-flag" src="https://flagcdn.com/w40/qa.png"/><span>Катар</span></span></td><td data-sort-value="П1 в обоих таймах"><span class="record-badge bet-badge">П1 в обоих таймах</span></td><td data-sort-value="2,56"><span class="record-badge coef-badge">2,56</span></td><td class="plus" data-sort-value="156"><span class="record-badge profit-badge">156</span></td></tr><tr><td>32</td><td class="match-cell" data-sort-value="Нидерланды — Швеция"><span class="match-with-flags"><img alt="Нидерланды" class="tooltip-flag" src="https://flagcdn.com/w40/nl.png"/><span>Нидерланды</span><span>—</span><img alt="Швеция" class="tooltip-flag" src="https://flagcdn.com/w40/se.png"/><span>Швеция</span></span></td><td data-sort-value="ТМ &gt; 3,5"><span class="record-badge bet-badge">ТМ &gt; 3,5</span></td><td data-sort-value="2,52"><span class="record-badge coef-badge">2,52</span></td><td class="plus" data-sort-value="152"><span class="record-badge profit-badge">152</span></td></tr><tr><td>21</td><td class="match-cell" data-sort-value="Англия — Хорватия"><span class="match-with-flags"><img alt="Англия" class="tooltip-flag" src="https://flagcdn.com/w40/gb-eng.png"/><span>Англия</span><span>—</span><img alt="Хорватия" class="tooltip-flag" src="https://flagcdn.com/w40/hr.png"/><span>Хорватия</span></span></td><td data-sort-value="Обе забьют"><span class="record-badge bet-badge">Обе забьют</span></td><td data-sort-value="2,02"><span class="record-badge coef-badge">2,02</span></td><td class="plus" data-sort-value="102"><span class="record-badge profit-badge">102</span></td></tr><tr><td>16</td><td class="match-cell" data-sort-value="Франция — Сенегал"><span class="match-with-flags"><img alt="Франция" class="tooltip-flag" src="https://flagcdn.com/w40/fr.png"/><span>Франция</span><span>—</span><img alt="Сенегал" class="tooltip-flag" src="https://flagcdn.com/w40/sn.png"/><span>Сенегал</span></span></td><td data-sort-value="Обе забьют"><span class="record-badge bet-badge">Обе забьют</span></td><td data-sort-value="2,01"><span class="record-badge coef-badge">2,01</span></td><td class="plus" data-sort-value="101"><span class="record-badge profit-badge">101</span></td></tr><tr><td>13</td><td class="match-cell" data-sort-value="Бельгия — Египет"><span class="match-with-flags"><img alt="Бельгия" class="tooltip-flag" src="https://flagcdn.com/w40/be.png"/><span>Бельгия</span><span>—</span><img alt="Египет" class="tooltip-flag" src="https://flagcdn.com/w40/eg.png"/><span>Египет</span></span></td><td data-sort-value="Обе забьют"><span class="record-badge bet-badge">Обе забьют</span></td><td data-sort-value="1,95"><span class="record-badge coef-badge">1,95</span></td><td class="plus" data-sort-value="95"><span class="record-badge profit-badge">95</span></td></tr><tr><td>30</td><td class="match-cell" data-sort-value="Бразилия — Гаити"><span class="match-with-flags"><img alt="Бразилия" class="tooltip-flag" src="https://flagcdn.com/w40/br.png"/><span>Бразилия</span><span>—</span><img alt="Гаити" class="tooltip-flag" src="https://flagcdn.com/w40/ht.png"/><span>Гаити</span></span></td><td data-sort-value="Винисиус забьёт"><span class="record-badge bet-badge">Винисиус забьёт</span></td><td data-sort-value="1,83"><span class="record-badge coef-badge">1,83</span></td><td class="plus" data-sort-value="83"><span class="record-badge profit-badge">83</span></td></tr><tr><td>2</td><td class="match-cell" data-sort-value="Канада — Босния и Герцеговина"><span class="match-with-flags"><img alt="Канада" class="tooltip-flag" src="https://flagcdn.com/w40/ca.png"/><span>Канада</span><span>—</span><img alt="Босния и Герцеговина" class="tooltip-flag" src="https://flagcdn.com/w40/ba.png"/><span>Босния и Герцеговина</span></span></td><td data-sort-value="ЖК ТБ(3,5)"><span class="record-badge bet-badge">ЖК ТБ(3,5)</span></td><td data-sort-value="1,74"><span class="record-badge coef-badge">1,74</span></td><td class="plus" data-sort-value="74"><span class="record-badge profit-badge">74</span></td></tr></tbody></table></div>
+</article>
+<article>
+<h3 class="subtable-title">Yukon</h3>
+<div class="table-wrap"><table class="records-table stats-table"><thead><tr><th data-sort-col="0" title="Сортировать">№</th><th data-sort-col="1" title="Сортировать">Матч</th><th data-sort-col="2" title="Сортировать">Ставка</th><th data-sort-col="3" title="Сортировать">Кэф</th><th data-sort-col="4" title="Сортировать">Профит</th></tr></thead><tbody><tr><td>8</td><td class="match-cell" data-sort-value="Германия — Кюрасао"><span class="match-with-flags"><img alt="Германия" class="tooltip-flag" src="https://flagcdn.com/w40/de.png"/><span>Германия</span><span>—</span><img alt="Кюрасао" class="tooltip-flag" src="https://flagcdn.com/w40/cw.png"/><span>Кюрасао</span></span></td><td data-sort-value="ТМ &gt; 5,5"><span class="record-badge bet-badge">ТМ &gt; 5,5</span></td><td data-sort-value="3,2"><span class="record-badge coef-badge">3,2</span></td><td class="plus" data-sort-value="220"><span class="record-badge profit-badge">220</span></td></tr><tr><td>32</td><td class="match-cell" data-sort-value="Нидерланды — Швеция"><span class="match-with-flags"><img alt="Нидерланды" class="tooltip-flag" src="https://flagcdn.com/w40/nl.png"/><span>Нидерланды</span><span>—</span><img alt="Швеция" class="tooltip-flag" src="https://flagcdn.com/w40/se.png"/><span>Швеция</span></span></td><td data-sort-value="Нидерланды пропустят, но выиграют"><span class="record-badge bet-badge">Нидерланды пропустят, но выиграют</span></td><td data-sort-value="3,1"><span class="record-badge coef-badge">3,1</span></td><td class="plus" data-sort-value="210"><span class="record-badge profit-badge">210</span></td></tr><tr><td>14</td><td class="match-cell" data-sort-value="Саудовская Аравия — Уругвай"><span class="match-with-flags"><img alt="Саудовская Аравия" class="tooltip-flag" src="https://flagcdn.com/w40/sa.png"/><span>Саудовская Аравия</span><span>—</span><img alt="Уругвай" class="tooltip-flag" src="https://flagcdn.com/w40/uy.png"/><span>Уругвай</span></span></td><td data-sort-value="Штанга/перекладина будет"><span class="record-badge bet-badge">Штанга/перекладина будет</span></td><td data-sort-value="2,44"><span class="record-badge coef-badge">2,44</span></td><td class="plus" data-sort-value="144"><span class="record-badge profit-badge">144</span></td></tr><tr><td>10</td><td class="match-cell" data-sort-value="Кот д'Ивуар — Эквадор"><span class="match-with-flags"><img alt="Кот д'Ивуар" class="tooltip-flag" src="https://flagcdn.com/w40/ci.png"/><span>Кот д'Ивуар</span><span>—</span><img alt="Эквадор" class="tooltip-flag" src="https://flagcdn.com/w40/ec.png"/><span>Эквадор</span></span></td><td data-sort-value="ЖК: П1"><span class="record-badge bet-badge">ЖК: П1</span></td><td data-sort-value="2,34"><span class="record-badge coef-badge">2,34</span></td><td class="plus" data-sort-value="134"><span class="record-badge profit-badge">134</span></td></tr><tr><td>18</td><td class="match-cell" data-sort-value="Аргентина — Алжир"><span class="match-with-flags"><img alt="Аргентина" class="tooltip-flag" src="https://flagcdn.com/w40/ar.png"/><span>Аргентина</span><span>—</span><img alt="Алжир" class="tooltip-flag" src="https://flagcdn.com/w40/dz.png"/><span>Алжир</span></span></td><td data-sort-value="Сухая П1 и ТМ &lt; 3,5"><span class="record-badge bet-badge">Сухая П1 и ТМ &lt; 3,5</span></td><td data-sort-value="2,34"><span class="record-badge coef-badge">2,34</span></td><td class="plus" data-sort-value="134"><span class="record-badge profit-badge">134</span></td></tr><tr><td>28</td><td class="match-cell" data-sort-value="США — Австралия"><span class="match-with-flags"><img alt="США" class="tooltip-flag" src="https://flagcdn.com/w40/us.png"/><span>США</span><span>—</span><img alt="Австралия" class="tooltip-flag" src="https://flagcdn.com/w40/au.png"/><span>Австралия</span></span></td><td data-sort-value="П1 и ТМ &gt; 1,5"><span class="record-badge bet-badge">П1 и ТМ &gt; 1,5</span></td><td data-sort-value="1,96"><span class="record-badge coef-badge">1,96</span></td><td class="plus" data-sort-value="96"><span class="record-badge profit-badge">96</span></td></tr><tr><td>3</td><td class="match-cell" data-sort-value="США — Парагвай"><span class="match-with-flags"><img alt="США" class="tooltip-flag" src="https://flagcdn.com/w40/us.png"/><span>США</span><span>—</span><img alt="Парагвай" class="tooltip-flag" src="https://flagcdn.com/w40/py.png"/><span>Парагвай</span></span></td><td data-sort-value="П1"><span class="record-badge bet-badge">П1</span></td><td data-sort-value="1,93"><span class="record-badge coef-badge">1,93</span></td><td class="plus" data-sort-value="93"><span class="record-badge profit-badge">93</span></td></tr><tr><td>9</td><td class="match-cell" data-sort-value="Нидерланды — Япония"><span class="match-with-flags"><img alt="Нидерланды" class="tooltip-flag" src="https://flagcdn.com/w40/nl.png"/><span>Нидерланды</span><span>—</span><img alt="Япония" class="tooltip-flag" src="https://flagcdn.com/w40/jp.png"/><span>Япония</span></span></td><td data-sort-value="Первый гол позже 30,5 минуты"><span class="record-badge bet-badge">Первый гол позже 30,5 минуты</span></td><td data-sort-value="1,81"><span class="record-badge coef-badge">1,81</span></td><td class="plus" data-sort-value="81"><span class="record-badge profit-badge">81</span></td></tr><tr><td>16</td><td class="match-cell" data-sort-value="Франция — Сенегал"><span class="match-with-flags"><img alt="Франция" class="tooltip-flag" src="https://flagcdn.com/w40/fr.png"/><span>Франция</span><span>—</span><img alt="Сенегал" class="tooltip-flag" src="https://flagcdn.com/w40/sn.png"/><span>Сенегал</span></span></td><td data-sort-value="Тотал офсайдов &gt; 2,5"><span class="record-badge bet-badge">Тотал офсайдов &gt; 2,5</span></td><td data-sort-value="1,81"><span class="record-badge coef-badge">1,81</span></td><td class="plus" data-sort-value="81"><span class="record-badge profit-badge">81</span></td></tr><tr><td>1</td><td class="match-cell" data-sort-value="Южная Корея — Чехия"><span class="match-with-flags"><img alt="Южная Корея" class="tooltip-flag" src="https://flagcdn.com/w40/kr.png"/><span>Южная Корея</span><span>—</span><img alt="Чехия" class="tooltip-flag" src="https://flagcdn.com/w40/cz.png"/><span>Чехия</span></span></td><td data-sort-value="ОЗ"><span class="record-badge bet-badge">ОЗ</span></td><td data-sort-value="1,74"><span class="record-badge coef-badge">1,74</span></td><td class="plus" data-sort-value="74"><span class="record-badge profit-badge">74</span></td></tr></tbody></table></div>
+</article>
+</div>
+</section>
+<section class="panel">
+<h2>Серии</h2>
+<div class="table-wrap"><table class="series-table stats-table"><thead><tr><th data-sort-col="0" title="Сортировать">Игрок</th><th data-sort-col="1" title="Сортировать">Тип серии</th><th data-sort-col="2" title="Сортировать">Матчи</th><th data-sort-col="3" title="Сортировать">Длина</th><th data-sort-col="4" title="Сортировать">Профит</th></tr></thead><tbody><tr><td>Gerzog</td><td>Лучшая успешная</td><td>28–30</td><td>3</td><td class="plus" data-sort-value="817"><span class="record-badge profit-badge">817</span></td></tr><tr><td>Gerzog</td><td>Худшая провальная</td><td>9–12</td><td>4</td><td class="minus" data-sort-value="-400"><span class="record-badge profit-badge">-400</span></td></tr><tr><td>Yukon</td><td>Лучшая успешная</td><td>8–11</td><td>4</td><td class="plus" data-sort-value="480"><span class="record-badge profit-badge">480</span></td></tr><tr><td>Yukon</td><td>Худшая провальная</td><td>19–21</td><td>3</td><td class="minus" data-sort-value="-300"><span class="record-badge profit-badge">-300</span></td></tr></tbody></table></div>
+</section>
+</main>
+<footer>
+<p>Статический сайт для GitHub Pages. Данные хранятся в <code>assets/app.js</code>.</p>
+</footer>
+<script src="assets/app.js"></script>
+<script id="records4-sort-script">
+(function () {
+  function normalizeText(value) {
+    return (value || '')
+      .replace(/\s+/g, ' ')
+      .replace(/ё/g, 'е')
+      .replace(/Ё/g, 'Е')
+      .trim();
+  }
+
+  function rawCellValue(cell) {
+    if (!cell) return '';
+    return cell.dataset.sortValue || cell.textContent || '';
+  }
+
+  function parseNumeric(value) {
+    const text = normalizeText(value)
+      .replace(/\u00a0/g, '')
+      .replace(/−/g, '-')
+      .replace(/,/g, '.');
+
+    if (/^-?\d+(?:\.\d+)?(?:\s*[–-]\s*\d+(?:\.\d+)?)?$/.test(text)) {
+      return parseFloat(text);
+    }
+    return Number.NaN;
+  }
+
+  function compareValues(a, b, direction) {
+    const rawA = rawCellValue(a);
+    const rawB = rawCellValue(b);
+    const numA = parseNumeric(rawA);
+    const numB = parseNumeric(rawB);
+
+    let result;
+    if (!Number.isNaN(numA) && !Number.isNaN(numB)) {
+      result = numA - numB;
+    } else {
+      result = normalizeText(rawA).localeCompare(normalizeText(rawB), 'ru', {
+        numeric: true,
+        sensitivity: 'base'
+      });
+    }
+    return direction === 'asc' ? result : -result;
+  }
+
+  document.querySelectorAll('table.stats-table').forEach(function (table) {
+    const headers = Array.from(table.querySelectorAll('thead th'));
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return;
+
+    headers.forEach(function (th, columnIndex) {
+      th.addEventListener('click', function () {
+        const current = th.dataset.sortDirection;
+        const next = current === 'asc' ? 'desc' : 'asc';
+
+        headers.forEach(function (other) {
+          other.dataset.sortDirection = '';
+          other.classList.remove('sort-asc', 'sort-desc');
+        });
+
+        th.dataset.sortDirection = next;
+        th.classList.add(next === 'asc' ? 'sort-asc' : 'sort-desc');
+
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort(function (rowA, rowB) {
+          return compareValues(rowA.children[columnIndex], rowB.children[columnIndex], next);
+        });
+        rows.forEach(function (row) {
+          tbody.appendChild(row);
+        });
+      });
+    });
+  });
+})();
+</script></body>
+</html>
