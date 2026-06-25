@@ -254,6 +254,172 @@
 .bets-table td.minus .profit-badge {
   background: rgb(114, 40, 44);
 }
+
+/* Уменьшение столбца Ставка */
+.bets-table .bet-cell {
+  width: 300px !important;
+  min-width: 300px !important;
+  max-width: 300px !important;
+}
+
+.bets-table .bet-badge {
+  max-width: 400px;
+  min-width: 0;
+  white-space: normal;
+  line-height: 1.15;
+  padding: 6px 8px;
+}
+
+/* Уменьшение столбца Матч */
+.bets-table .match-cell {
+  width: 200px !important;
+  min-width: 200px !important;
+  max-width: 200px !important;
+  text-align: center !important;
+  font-size: 0.9em;
+}
+
+.bets-table .match-with-flags {
+  gap: 6px;
+}
+
+.bets-table .match-with-flags .tooltip-flag {
+  width: 30px;
+  height: 20px;
+}
+
+/* Уменьшение столбца Игрок */
+.bets-table th:nth-child(2),
+.bets-table .player-cell {
+  width: 75px !important;
+  min-width: 75px !important;
+  max-width: 75px !important;
+}
+
+.bets-table .player-badge {
+  width: 70px;
+  min-width: 70px;
+  padding: 0 6px;
+  font-size: 0.92em;
+}
+
+/* Уменьшение столбцов Кэф, Профит, Банк */
+
+/* Кэф */
+.bets-table .coef-cell {
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+}
+
+.bets-table .coef-badge {
+  width: 52px;
+  min-width: 52px;
+  padding: 0 6px;
+}
+
+/* Профит */
+.bets-table .profit-cell {
+  width: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;
+}
+
+.bets-table .profit-badge {
+  width: 56px;
+  min-width: 56px;
+  height: 32px;
+  padding: 0 6px;
+}
+
+/* Банк */
+.bets-table .bank-cell {
+  width: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;
+}
+
+.bets-table .bank-badge {
+  width: 56px;
+  min-width: 56px;
+  padding: 0 6px;
+}
+
+/* Исправление налезания sticky-столбцов */
+.bets-table {
+  --num-col-width: 64px;
+  --player-col-width: 86px;
+  --match-col-width: 320px;
+}
+
+/* 1. Фиксируем реальные ширины первых трёх столбцов */
+.bets-table th:nth-child(1),
+.bets-table .num-cell {
+  width: var(--num-col-width) !important;
+  min-width: var(--num-col-width) !important;
+  max-width: var(--num-col-width) !important;
+  box-sizing: border-box;
+}
+
+.bets-table th:nth-child(2),
+.bets-table .player-cell {
+  width: var(--player-col-width) !important;
+  min-width: var(--player-col-width) !important;
+  max-width: var(--player-col-width) !important;
+  box-sizing: border-box;
+}
+
+.bets-table th:nth-child(3),
+.bets-table .match-cell {
+  width: var(--match-col-width) !important;
+  min-width: var(--match-col-width) !important;
+  max-width: var(--match-col-width) !important;
+  box-sizing: border-box;
+}
+
+/* 2. Синхронизируем sticky-смещения */
+.bets-table th:nth-child(1),
+.bets-table .num-cell {
+  position: sticky;
+  left: 0 !important;
+  z-index: 30;
+  background: #fff;
+}
+
+.bets-table th:nth-child(2),
+.bets-table .player-cell {
+  position: sticky;
+  left: var(--num-col-width) !important;
+  z-index: 29;
+  background: #fff;
+}
+
+.bets-table th:nth-child(3),
+.bets-table .match-cell {
+  position: sticky;
+  left: calc(var(--num-col-width) + var(--player-col-width)) !important;
+  z-index: 28;
+  background: #fff;
+  overflow: hidden;
+}
+
+/* 3. Заголовки держим выше тела таблицы */
+.bets-table thead th:nth-child(1),
+.bets-table thead th:nth-child(2),
+.bets-table thead th:nth-child(3) {
+  z-index: 40;
+}
+
+/* 4. В тёмной теме сохраняем фон sticky-ячеек */
+.dark-theme .bets-table th:nth-child(1),
+.dark-theme .bets-table .num-cell,
+.dark-theme .bets-table th:nth-child(2),
+.dark-theme .bets-table .player-cell,
+.dark-theme .bets-table th:nth-child(3),
+.dark-theme .bets-table .match-cell {
+  background: #080808;
+}
+
 </style>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
