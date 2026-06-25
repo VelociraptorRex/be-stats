@@ -79,14 +79,14 @@ header nav a {
 .dark-theme .top-menu a:hover,
 .dark-theme .site-header nav a:hover,
 .dark-theme header nav a:hover {
-  background: #fff;
+  background: #39deea;
   color: #000;
 }
 
 .light-theme .top-menu a:hover,
 .light-theme .site-header nav a:hover,
 .light-theme header nav a:hover {
-  background: #000;
+  background: #0047ab;
   color: #fff;
 }
 
