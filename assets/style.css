@@ -572,3 +572,68 @@ code {
 #bank-chart .plotly .draglayer:active {
   cursor: grabbing !important;
 }
+
+@media (max-width: 700px) {
+  .page {
+    padding: 18px 10px;
+  }
+
+  .page-title {
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  .top-menu {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .top-menu a {
+    font-size: 18px;
+    padding: 10px 14px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .summary-card {
+    padding: 18px 14px;
+  }
+
+  .summary-card .value {
+    font-size: 44px;
+  }
+
+  .last-results-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .last-results-heading {
+    font-size: 26px;
+  }
+
+  .result-badge {
+    width: 46px;
+    height: 46px;
+    font-size: 25px;
+  }
+
+  .chart-block {
+    overflow-x: auto;
+    padding: 14px;
+  }
+
+  #bank-chart {
+    min-width: 950px;
+    height: 520px;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
