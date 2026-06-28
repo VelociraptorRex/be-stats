@@ -298,10 +298,45 @@ let bankSvgPanZoom = null;
 let bankSvgLoaded = false;
 
 async function initBankSvgViewer() {
-  const details = document.querySelector(".svg-details");
-  const container = document.getElementById("svg-container");
+const details = document.querySelector(".svg-details");
+const container = document.getElementById("svg-container");
+const fullscreenBtn = document.getElementById("svg-fullscreen-btn");
 
-  if (!details || !container) return;
+if (!details || !container) return;
+
+if (fullscreenBtn) {
+  fullscreenBtn.addEventListener("click", async () => {
+    if (!document.fullscreenElement) {
+      await container.requestFullscreen();
+      fullscreenBtn.textContent = "Выйти из полного экрана";
+    } else {
+      await document.exitFullscreen();
+      fullscreenBtn.textContent = "На весь экран";
+    }
+
+    setTimeout(() => {
+      if (bankSvgPanZoom) {
+        bankSvgPanZoom.resize();
+        bankSvgPanZoom.fit();
+        bankSvgPanZoom.center();
+      }
+    }, 100);
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    fullscreenBtn.textContent = document.fullscreenElement
+      ? "Выйти из полного экрана"
+      : "На весь экран";
+
+    setTimeout(() => {
+      if (bankSvgPanZoom) {
+        bankSvgPanZoom.resize();
+        bankSvgPanZoom.fit();
+        bankSvgPanZoom.center();
+      }
+    }, 100);
+  });
+}
 
   async function loadBankSvg() {
     if (bankSvgLoaded) return;
@@ -329,7 +364,7 @@ async function initBankSvgViewer() {
       bankSvgPanZoom = svgPanZoom(svg, {
         zoomEnabled: true,
         controlIconsEnabled: true,
-        mouseWheelZoomEnabled: true,
+        mouseWheelZoomEnabled: false,
         fit: false,
         center: false,
         minZoom: 0.2,
