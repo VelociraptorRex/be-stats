@@ -308,7 +308,9 @@ if (fullscreenBtn) {
   fullscreenBtn.addEventListener("click", async () => {
     if (!document.fullscreenElement) {
       await container.requestFullscreen();
-      fullscreenBtn.textContent = "Выйти из полного экрана";
+      fullscreenBtn.title = document.fullscreenElement
+          ? "Выйти из полного экрана"
+          : "На весь экран";
     } else {
       await document.exitFullscreen();
       fullscreenBtn.textContent = "На весь экран";
