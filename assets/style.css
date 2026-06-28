@@ -79,14 +79,14 @@ header nav a {
 .dark-theme .top-menu a:hover,
 .dark-theme .site-header nav a:hover,
 .dark-theme header nav a:hover {
-  background: #39deea;
+  background: #fff;
   color: #000;
 }
 
 .light-theme .top-menu a:hover,
 .light-theme .site-header nav a:hover,
 .light-theme header nav a:hover {
-  background: #0047ab;
+  background: #000;
   color: #fff;
 }
 
@@ -573,67 +573,35 @@ code {
   cursor: grabbing !important;
 }
 
-@media (max-width: 700px) {
-  .page {
-    padding: 18px 10px;
-  }
+.svg-panel {
+  margin-top: 28px;
+}
 
-  .page-title {
-    font-size: 34px;
-    line-height: 1.1;
-  }
+.svg-details summary {
+  cursor: pointer;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+}
 
-  .top-menu {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+.svg-viewer {
+  width: 100%;
+  height: 690px !important;
+  min-height: 690px !important;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 14px;
+}
 
-  .top-menu a {
-    font-size: 18px;
-    padding: 10px 14px;
-  }
+.svg-viewer svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
-  .summary-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .summary-card {
-    padding: 18px 14px;
-  }
-
-  .summary-card .value {
-    font-size: 44px;
-  }
-
-  .last-results-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .last-results-heading {
-    font-size: 26px;
-  }
-
-  .result-badge {
-    width: 46px;
-    height: 46px;
-    font-size: 25px;
-  }
-
-  .chart-block {
-    overflow-x: auto;
-    padding: 14px;
-  }
-
-  #bank-chart {
-    min-width: 950px;
-    height: 520px;
-  }
-
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+.svg-loading {
+  padding: 30px;
+  color: #000;
+  font-size: 24px;
+  text-align: center;
 }

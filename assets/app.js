@@ -293,3 +293,68 @@ function renderBankChart() {
 }
 
 document.addEventListener("DOMContentLoaded", renderBankChart);
+
+let bankSvgPanZoom = null;
+let bankSvgLoaded = false;
+
+async function initBankSvgViewer() {
+  const details = document.querySelector(".svg-details");
+  const container = document.getElementById("svg-container");
+
+  if (!details || !container) return;
+
+  async function loadBankSvg() {
+    if (bankSvgLoaded) return;
+
+    bankSvgLoaded = true;
+    container.innerHTML = '<div class="svg-loading">Загрузка SVG...</div>';
+
+    try {
+      const response = await fetch("assets/bank_full.svg");
+
+      if (!response.ok) {
+        throw new Error("Не удалось загрузить SVG: " + response.status);
+      }
+
+      const svgText = await response.text();
+      container.innerHTML = svgText;
+
+      const svg = container.querySelector("svg");
+      if (!svg) throw new Error("В файле не найден тег svg");
+
+      svg.removeAttribute("width");
+      svg.removeAttribute("height");
+      svg.style.display = "block";
+
+      bankSvgPanZoom = svgPanZoom(svg, {
+        zoomEnabled: true,
+        controlIconsEnabled: true,
+        mouseWheelZoomEnabled: true,
+        fit: false,
+        center: false,
+        minZoom: 0.2,
+        maxZoom: 25
+      });
+
+      setTimeout(() => {
+        bankSvgPanZoom.resize();
+        bankSvgPanZoom.fit();
+        bankSvgPanZoom.center();
+      }, 100);
+
+    } catch (error) {
+      console.error(error);
+      container.innerHTML = '<div class="svg-loading">Не удалось загрузить SVG</div>';
+      bankSvgLoaded = false;
+    }
+  }
+
+  details.addEventListener("toggle", () => {
+    if (details.open) loadBankSvg();
+  });
+
+  if (details.open) loadBankSvg();
+}
+
+document.addEventListener("DOMContentLoaded", initBankSvgViewer);
+console.log("SVG viewer script loaded");

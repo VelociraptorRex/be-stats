@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="assets/style.css">
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
+
 <body class="dark-theme">
 <main class="page">
   <h1 class="page-title">Динамика банка после матчей первого и второго тура ЧМ-2026</h1>
@@ -33,6 +34,14 @@
     <p class="note">По оси X указаны пары в FIFA-формате: ARG-ALG, UZB-COL и т.д. График можно двигать влево/вправо, удерживая ЛКМ.</p>
   </section>
 
+  <section class="chart-block svg-panel">
+    <details class="svg-details">
+      <summary>Показать подробный график</summary>
+      <div id="svg-container" class="svg-viewer"></div>
+    </details>
+  </section>
+
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>
