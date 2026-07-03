@@ -249,7 +249,7 @@ function renderBankChart() {
       xanchor: "left",
       yshift: 16,
       font: { size: 16, color: "#000000" }
-    }
+    },
     {
       xref: "x",
       x:70.7,
