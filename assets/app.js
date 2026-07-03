@@ -250,6 +250,17 @@ function renderBankChart() {
       yshift: 16,
       font: { size: 16, color: "#000000" }
     }
+    {
+      xref: "x",
+      x:70.7,
+      yref: "paper",
+      y: 1,
+      text: "1/16 финала",
+      showarrow: false,
+      xanchor: "left",
+      yshift: 16,
+      font: { size: 16, color: "#000000" }
+    }
     ]
   };
 
