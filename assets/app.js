@@ -215,6 +215,16 @@ function renderBankChart() {
       y0: 0,
       y1: 1,
       line: { color: "rgba(0,0,0,0.55)", width: 1.4, dash: "dash" }
+    },
+    {
+      type: "line",
+      xref: "x",
+      x0: 71.5,
+      x1: 71.5,
+      yref: "paper",
+      y0: 0,
+      y1: 1,
+      line: { color: "rgba(0,0,0,0.55)", width: 1.4, dash: "dash" }
     }
     ],
     annotations: [
@@ -252,7 +262,7 @@ function renderBankChart() {
     },
     {
       xref: "x",
-      x:70.7,
+      x:71.7,
       yref: "paper",
       y: 1,
       text: "1/16 финала",
